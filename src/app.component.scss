@@ -1,0 +1,26 @@
+h4 {
+    margin: 1rem;
+}
+
+.field-container {
+  margin: 1rem;
+}
+
+.btn-container {
+  margin: .5rem;
+}
+
+.mat-mdc-form-field {
+  width: 15rem;
+}
+
+@media only screen and (min-width: 760px) {
+  .container {
+    width: 600px;
+    margin: 0 auto;
+  }
+
+  .mat-mdc-form-field {
+    width: 20rem;
+  }
+}

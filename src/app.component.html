@@ -1,1 +1,59 @@
-<button mat-raised-button color="primary">Primary</button>
+<section class="container">
+  <h4>Book Your Flight</h4>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="field-container">
+      <mat-form-field>
+        <mat-label>From</mat-label>
+        <select matNativeControl required formControlName="origen">
+          <option label="-- Departure City --"></option>
+          @for (city of cities; track city) {
+            <option [value]="city.value">{{city.name}}</option>
+          }
+        </select>
+        @if (form.controls.origen.hasError('required')) {
+          <mat-error>Departure is required</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="field-container">
+      <mat-form-field>
+        <mat-label>To</mat-label>
+        <select matNativeControl required formControlName="destination">
+          <option label="-- Destination City --"></option>
+          @for (city of cities; track city) {
+            <option [value]="city.value">{{city.name}}</option>
+          }
+        </select>
+        @if (form.controls.destination.hasError('required')) {
+          <mat-error>Destination is required</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="field-container">
+      <mat-form-field>
+        <mat-label>Depart & Return date</mat-label>
+        <mat-date-range-input formGroupName="range" [rangePicker]="picker">
+          <input matStartDate required formControlName="start" placeholder="MM/DD/YYYY">
+          <input matEndDate required formControlName="end" placeholder="MM/DD/YYYY">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+        @if (
+              form.controls.range.controls.start.hasError('required') ||
+              form.controls.range.controls.end.hasError('required')
+        ) {
+          <mat-error>Both Depart & Return dates are required</mat-error>
+        }
+        @if (form.controls.range.controls.start.hasError('matStartDateInvalid')) {
+          <mat-error>Invalid Depart date</mat-error>
+        }
+        @if (form.controls.range.controls.end.hasError('matEndDateInvalid')) {
+          <mat-error>Invalid Return date</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="btn-container">
+      <button type="submit" mat-raised-button color="primary" [disabled]="!form.valid">Submit</button>
+    </div>
+  </form>
+</section>
