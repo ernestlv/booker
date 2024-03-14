@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {FormGroup, FormControl, Validators} from '@angular/forms';
-import {CitiesService} from './cities.service'
+import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { CitiesService } from './cities.service';
+import { DialogComponent } from './dialog/dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -9,18 +11,19 @@ import {CitiesService} from './cities.service'
 })
 export class AppComponent implements OnInit {
 
+  minDate = new Date();
+
   cities:{ name: string; value: string }[] = [];
 
   form = new FormGroup({
-    origen: new FormControl('', Validators.required),
+    departure: new FormControl('', Validators.required),
     destination: new FormControl('', Validators.required),
-    range: new FormGroup({
-      start: new FormControl<Date | null>(null, Validators.required),
-      end: new FormControl<Date | null>(null, Validators.required)
-    })
-  });
+    departDate: new FormControl<Date | null>(null, Validators.required),
+    returnDate: new FormControl<Date | null>(null, Validators.required)
+  }, { validators: [this.cityValidator, this.rangeValidator] });
 
   constructor(
+    public dialog: MatDialog,
     private cityService:CitiesService
   ){}
 
@@ -29,6 +32,21 @@ export class AppComponent implements OnInit {
   }
 
   onSubmit() {
-    alert('XXX!!!!')
+    //alert('Happy Jetting!')
+    this.dialog.open(DialogComponent);
+  }
+
+  cityValidator(control: AbstractControl) {
+    const departure = control.get('departure');
+    const destination = control.get('destination');
+
+    return departure!.value && destination!.value && departure!.value === destination!.value ? {invalidDestination: true} : null;
+  }
+
+  rangeValidator(control: AbstractControl) {
+    const departD = control.get('departDate');
+    const returnD = control.get('returnDate');
+
+    return departD!.value && returnD!.value && departD!.value.getTime() > returnD!.value.getTime() ? {invalidRange: true} : null;
   }
 }

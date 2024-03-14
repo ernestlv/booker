@@ -4,13 +4,13 @@
     <div class="field-container">
       <mat-form-field>
         <mat-label>From</mat-label>
-        <select matNativeControl required formControlName="origen">
+        <select matNativeControl required formControlName="departure">
           <option label="-- Departure City --"></option>
           @for (city of cities; track city) {
             <option [value]="city.value">{{city.name}}</option>
           }
         </select>
-        @if (form.controls.origen.hasError('required')) {
+        @if (form.controls.departure.hasError('required')) {
           <mat-error>Departure is required</mat-error>
         }
       </mat-form-field>
@@ -31,26 +31,54 @@
     </div>
     <div class="field-container">
       <mat-form-field>
-        <mat-label>Depart & Return date</mat-label>
-        <mat-date-range-input formGroupName="range" [rangePicker]="picker">
-          <input matStartDate required formControlName="start" placeholder="MM/DD/YYYY">
-          <input matEndDate required formControlName="end" placeholder="MM/DD/YYYY">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
+        <mat-label>Depart date</mat-label>
+        <input matInput required formControlName="departDate"
+              [min]="minDate" [matDatepicker]="picker1" placeholder="MM/DD/YYYY">
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
         @if (
-              form.controls.range.controls.start.hasError('required') ||
-              form.controls.range.controls.end.hasError('required')
+              form.controls.departDate.hasError('required')
         ) {
-          <mat-error>Both Depart & Return dates are required</mat-error>
+          <mat-error>Depart date is required</mat-error>
         }
-        @if (form.controls.range.controls.start.hasError('matStartDateInvalid')) {
-          <mat-error>Invalid Depart date</mat-error>
-        }
-        @if (form.controls.range.controls.end.hasError('matEndDateInvalid')) {
-          <mat-error>Invalid Return date</mat-error>
+        @if (
+              form.controls.departDate.hasError('matDatepickerMin')
+        ) {
+          <mat-error>Depart date must be today or later</mat-error>
         }
       </mat-form-field>
+    </div>
+    <div class="field-container">
+      <mat-form-field>
+        <mat-label>Return date</mat-label>
+        <input matInput required formControlName="returnDate"
+              [min]="minDate" [matDatepicker]="picker2" placeholder="MM/DD/YYYY">
+        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+        @if (
+              form.controls.returnDate.hasError('required')
+        ) {
+          <mat-error>Return date is required</mat-error>
+        }
+        @if (
+              form.controls.returnDate.hasError('matDatepickerMin')
+        ) {
+          <mat-error>Return date must be today or later</mat-error>
+        }
+      </mat-form-field>
+
+    </div>
+    <div class="field-container">
+      @if (
+          form.dirty && form.errors?.["invalidDestination"]
+      ) {
+        <mat-error>Departure & Destination must different</mat-error>
+      }
+      @if (
+          form.errors?.["invalidRange"]
+      ) {
+        <mat-error>Return date must be later than Depart date</mat-error>
+      }
     </div>
     <div class="btn-container">
       <button type="submit" mat-raised-button color="primary" [disabled]="!form.valid">Submit</button>
